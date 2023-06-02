@@ -5,7 +5,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-@MapperScan("com.tianlin.usercenter.mappers")
+@MapperScan("com.tianlin.usercenter.mapper")
 public class JavaServerApplication {
 
     public static void main(String[] args) {
