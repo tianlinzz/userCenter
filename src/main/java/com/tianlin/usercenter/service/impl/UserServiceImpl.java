@@ -112,23 +112,32 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
             return null;
         }
         // 3.返回用户信息,不包含密码
-        User safetyUser = new User();
-        System.out.println(user);
-        safetyUser.setId(user.getId());
-        safetyUser.setUsername(user.getUsername());
-        safetyUser.setUserAccount(user.getUserAccount());
-        safetyUser.setAvatarUrl(user.getAvatarUrl());
-        safetyUser.setGender(user.getGender());
-        safetyUser.setPhone(user.getPhone());
-        safetyUser.setEmail(user.getEmail());
-        safetyUser.setUserStatus(user.getUserStatus());
-        safetyUser.setCreateTime(user.getCreateTime());
-        safetyUser.setUpdateTime(user.getUpdateTime());
-        safetyUser.setUserRole(user.getUserRole());
-        safetyUser.setIsDelete(user.getIsDelete());
+        User safetyUser = getSafetUser(user);
         // 4.记录用户的登录状态
         request.getSession().setAttribute(USER_LOGIN_STATUS, safetyUser);
         // 5.返回用户信息
+        return getSafetUser(user);
+    }
+
+    /**
+     * @description 获取安全用户信息,不包含密码
+     * @param originUser 原始用户信息
+     * @return User
+     */
+    @Override
+    public User getSafetUser(User originUser) {
+        User safetyUser = new User();
+        safetyUser.setId(originUser.getId());
+        safetyUser.setUsername(originUser.getUsername());
+        safetyUser.setUserAccount(originUser.getUserAccount());
+        safetyUser.setAvatarUrl(originUser.getAvatarUrl());
+        safetyUser.setGender(originUser.getGender());
+        safetyUser.setPhone(originUser.getPhone());
+        safetyUser.setEmail(originUser.getEmail());
+        safetyUser.setUserStatus(originUser.getUserStatus());
+        safetyUser.setCreateTime(originUser.getCreateTime());
+        safetyUser.setUpdateTime(originUser.getUpdateTime());
+        safetyUser.setUserRole(originUser.getUserRole());
         return safetyUser;
     }
 }

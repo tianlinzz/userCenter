@@ -12,6 +12,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.tianlin.usercenter.constant.UserConstant.ADMIN_ROLE;
 import static com.tianlin.usercenter.constant.UserConstant.USER_LOGIN_STATUS;
@@ -66,7 +67,8 @@ public class UserController {
         if (StringUtils.isNotBlank(username)) {
             queryWrapper.like("username", username);
         }
-        return userService.list(queryWrapper);
+        List<User> userList = userService.list(queryWrapper);
+        return userList.stream().map(user -> userService.getSafetUser(user)).collect(Collectors.toList());
     }
 
     @PostMapping("/delete")
@@ -90,7 +92,6 @@ public class UserController {
      */
     private boolean isAdmin(HttpServletRequest request) {
         Object userObj = request.getSession().getAttribute(USER_LOGIN_STATUS);
-        System.out.println(userObj);
         User user = (User) userObj;
         return user == null || user.getUserRole() != ADMIN_ROLE; // 不是管理员且未登录
     }
