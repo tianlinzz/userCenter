@@ -1,9 +1,6 @@
 package com.tianlin.usercenter.model.domain;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.annotation.*;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -75,7 +72,13 @@ public class User implements Serializable {
     /**
      * 逻辑删除(0未删除 1删除)
      */
+    @TableLogic // 逻辑删除注解
     private Integer isDelete;
+
+    /**
+     * 用户角色 0普通用户 1管理员
+     */
+    private Integer userRole;
 
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;
