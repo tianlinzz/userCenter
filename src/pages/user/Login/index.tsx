@@ -39,6 +39,7 @@ const Login: React.FC = () => {
       const usrInfo = await login({
         ...values,
       });
+
       if (usrInfo !== null) {
         const defaultLoginSuccessMessage = '登录成功！';
         message.success(defaultLoginSuccessMessage);
@@ -52,6 +53,7 @@ const Login: React.FC = () => {
         history.push(redirect || '/');
         return;
       }
+
       // 如果失败去设置用户错误信息
       setUserLoginState(usrInfo);
     } catch (error) {
