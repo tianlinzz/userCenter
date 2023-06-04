@@ -71,7 +71,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         User user = new User();
         user.setUserAccount(userAccount);
         user.setUserPassword(password);
-        this.save(user);
         boolean saveResult = this.save(user);
         if (!saveResult) {
             return -1;
@@ -127,6 +126,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
     @Override
     public User getSafetUser(User originUser) {
         User safetyUser = new User();
+        if (originUser == null) {
+            return null;
+        }
         safetyUser.setId(originUser.getId());
         safetyUser.setUsername(originUser.getUsername());
         safetyUser.setUserAccount(originUser.getUserAccount());

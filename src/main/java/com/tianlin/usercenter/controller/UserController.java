@@ -56,6 +56,18 @@ public class UserController {
         return userService.userLogin(userAccount, userPassword, request);
     }
 
+    @GetMapping("/current")
+    public User userCurrent(HttpServletRequest request) {
+        Object userObj = request.getSession().getAttribute(USER_LOGIN_STATUS);
+        User currentUser = (User) userObj; // 强转
+        if (currentUser == null) {
+            return null;
+        }
+        long userId = currentUser.getId();
+        User user = userService.getById(userId);
+        return userService.getSafetUser(user);
+    }
+
     @GetMapping("/list")
     public List<User> userList(String username, HttpServletRequest request) {
         // 鉴权
