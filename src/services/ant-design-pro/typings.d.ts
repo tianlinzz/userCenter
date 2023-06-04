@@ -3,27 +3,26 @@
 
 declare namespace API {
   type CurrentUser = {
-    name?: string;
-    avatar?: string;
-    userid?: string;
+    id?: number;
+    username?: string;
+    avatarUrl?: string;
+    userAccount?: string;
     email?: string;
-    signature?: string;
-    title?: string;
-    group?: string;
-    tags?: { key?: string; label?: string }[];
-    notifyCount?: number;
-    unreadCount?: number;
-    country?: string;
-    access?: string;
-    geographic?: {
-      province?: { label?: string; key?: string };
-      city?: { label?: string; key?: string };
-    };
-    address?: string;
+    gender?: number;
     phone?: string;
+    userStatus?: number;
+    createTime?: Date;
+    updateTime?: Date;
+    userRole?: number;
   };
 
   type LoginResult = {
+    status?: string;
+    type?: string;
+    currentAuthority?: string;
+  };
+
+  type RegisterResult = {
     status?: string;
     type?: string;
     currentAuthority?: string;
@@ -65,6 +64,12 @@ declare namespace API {
     userAccount?: string;
     userPassword?: string;
     autoLogin?: boolean;
+  };
+
+  type RegisterParams = {
+    userAccount?: string;
+    userPassword?: string;
+    checkPassword?: string;
   };
 
   type ErrorResponse = {

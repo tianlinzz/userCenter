@@ -2,12 +2,11 @@ import Footer from '@/components/Footer';
 import { login } from '@/services/ant-design-pro/api';
 import { LockOutlined, UserOutlined } from '@ant-design/icons';
 import { LoginForm, ProFormCheckbox, ProFormText } from '@ant-design/pro-components';
+import { SYSTEM_LOGO } from '@/pages/constant';
 import { Alert, message } from 'antd';
 import React, { useState } from 'react';
-// @ts-ignore
 import { history, useModel } from 'umi';
 import styles from './index.less';
-import { SYSTEM_LOGO } from '@/pages/constant';
 
 const LoginMessage: React.FC<{
   content: string;
@@ -21,9 +20,11 @@ const LoginMessage: React.FC<{
     showIcon
   />
 );
+
 const Login: React.FC = () => {
   const [userLoginState, setUserLoginState] = useState<API.LoginResult>({});
   const { initialState, setInitialState } = useModel('@@initialState');
+
   const fetchUserInfo = async () => {
     const userInfo = await initialState?.fetchUserInfo?.();
     if (userInfo) {
@@ -53,7 +54,6 @@ const Login: React.FC = () => {
         history.push(redirect || '/');
         return;
       }
-
       // 如果失败去设置用户错误信息
       setUserLoginState(usrInfo);
     } catch (error) {
@@ -71,6 +71,16 @@ const Login: React.FC = () => {
           initialValues={{
             autoLogin: true,
           }}
+          subTitle={<a style={{ fontSize: '22px' }}>登录</a>}
+          actions={[
+            <a
+              key="register"
+              style={{ fontSize: '16px' }}
+              onClick={() => history.push('/user/register')}
+            >
+              没有账号？去注册
+            </a>,
+          ]}
           onFinish={async (values) => {
             await handleSubmit(values as API.LoginParams);
           }}

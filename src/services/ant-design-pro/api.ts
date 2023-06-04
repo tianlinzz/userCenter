@@ -1,12 +1,18 @@
 // @ts-ignore
 /* eslint-disable */
+// @ts-ignore
 import { request } from 'umi';
 
-/** 获取当前的用户 GET /api/currentUser */
+/** 获取当前的用户 GET /user/current */
 export async function currentUser(options?: { [key: string]: any }) {
-  return request<{
-    data: API.CurrentUser;
-  }>('/api/currentUser', {
+  return request<API.CurrentUser>('/user/current', {
+    method: 'GET',
+    ...(options || {}),
+  });
+}
+/** 获取用户列表 GET /user/list */
+export async function getUserList(options?: { [key: string]: any }) {
+  return request<API.CurrentUser>('/user/list', {
     method: 'GET',
     ...(options || {}),
   });
@@ -20,9 +26,21 @@ export async function outLogin(options?: { [key: string]: any }) {
   });
 }
 
-/** 登录接口 POST /api/login/account */
+/** 登录接口 POST /user/login */
 export async function login(body: API.LoginParams, options?: { [key: string]: any }) {
   return request<API.LoginResult>('/user/login', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    data: body,
+    ...(options || {}),
+  });
+}
+
+/** 注册接口 POST /user/register */
+export async function register(body: API.RegisterParams, options?: { [key: string]: any }) {
+  return request<API.RegisterResult>('/user/register', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
