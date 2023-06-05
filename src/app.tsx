@@ -32,8 +32,9 @@ export async function getInitialState(): Promise<{
   fetchUserInfo?: () => Promise<API.CurrentUser | undefined>;
 }> {
   const fetchUserInfo = async (): Promise<any> => {
+    const res = await queryCurrentUser();
     try {
-      return await queryCurrentUser();
+      return res;
     } catch (error) {
       const { location } = history;
       // 如果是白名单，不执行
@@ -130,7 +131,13 @@ const handelResponse = async (response: Response): Promise<any> => {
     // 成功, 直接返回数据
     return res.data;
   }
-  return message.error(res.msg); // 失败，提示错误信息
+  if (res.code === 40100) {
+    message.error('登录过期，请重新登录');
+    // 未登录，跳转到登录页
+    return history.push(loginPath);
+  } else {
+    throw new Error(res.msg); //其它错误，就直接抛出抛出错误信息，让业务去处理
+  }
 };
 
 export const request: RequestConfig = {
