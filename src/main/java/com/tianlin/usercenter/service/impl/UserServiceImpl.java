@@ -35,6 +35,31 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
      */
     private static final String md5Password = "tianlin";
 
+    /**
+     * @description 获取安全用户信息,不包含密码
+     * @param originUser 原始用户信息
+     * @return User
+     */
+    @Override
+    public User getSafetUser(User originUser) {
+        User safetyUser = new User();
+        if (originUser == null) {
+            return null;
+        }
+        safetyUser.setId(originUser.getId());
+        safetyUser.setUsername(originUser.getUsername());
+        safetyUser.setUserAccount(originUser.getUserAccount());
+        safetyUser.setAvatarUrl(originUser.getAvatarUrl());
+        safetyUser.setGender(originUser.getGender());
+        safetyUser.setPhone(originUser.getPhone());
+        safetyUser.setEmail(originUser.getEmail());
+        safetyUser.setUserStatus(originUser.getUserStatus());
+        safetyUser.setCreateTime(originUser.getCreateTime());
+        safetyUser.setUpdateTime(originUser.getUpdateTime());
+        safetyUser.setUserRole(originUser.getUserRole());
+        return safetyUser;
+    }
+
     @Override
     public long userRegister(String userAccount, String userPassword, String checkPassword) {
         // 1.校验
@@ -118,30 +143,13 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         return getSafetUser(user);
     }
 
-    /**
-     * @description 获取安全用户信息,不包含密码
-     * @param originUser 原始用户信息
-     * @return User
-     */
     @Override
-    public User getSafetUser(User originUser) {
-        User safetyUser = new User();
-        if (originUser == null) {
-            return null;
-        }
-        safetyUser.setId(originUser.getId());
-        safetyUser.setUsername(originUser.getUsername());
-        safetyUser.setUserAccount(originUser.getUserAccount());
-        safetyUser.setAvatarUrl(originUser.getAvatarUrl());
-        safetyUser.setGender(originUser.getGender());
-        safetyUser.setPhone(originUser.getPhone());
-        safetyUser.setEmail(originUser.getEmail());
-        safetyUser.setUserStatus(originUser.getUserStatus());
-        safetyUser.setCreateTime(originUser.getCreateTime());
-        safetyUser.setUpdateTime(originUser.getUpdateTime());
-        safetyUser.setUserRole(originUser.getUserRole());
-        return safetyUser;
+    public int userLogout(HttpServletRequest request) {
+        // 1.清除session中的用户登录状态
+        request.getSession().removeAttribute(USER_LOGIN_STATUS);
+        return 1;
     }
+
 }
 
 

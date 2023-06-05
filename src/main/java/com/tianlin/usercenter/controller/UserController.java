@@ -29,6 +29,18 @@ public class UserController {
     @Resource
     private UserService userService;
 
+    /**
+     * 判断是否为管理员
+     *
+     * @param request 请求
+     * @return 是否为管理员
+     */
+    private boolean isAdmin(HttpServletRequest request) {
+        Object userObj = request.getSession().getAttribute(USER_LOGIN_STATUS);
+        User user = (User) userObj;
+        return user == null || user.getUserRole() != ADMIN_ROLE; // 不是管理员且未登录
+    }
+
     @PostMapping("/register")
     public Long userRegister(@RequestBody UserRegisterRequest userRegisterRequest) {
         if (userRegisterRequest == null) {
@@ -54,6 +66,15 @@ public class UserController {
             return null;
         }
         return userService.userLogin(userAccount, userPassword, request);
+    }
+
+
+    @PostMapping("/logout")
+    public Integer userLogout(HttpServletRequest request) {
+        if (request == null) {
+            return null;
+        }
+        return userService.userLogout(request);
     }
 
     @GetMapping("/current")
@@ -96,15 +117,5 @@ public class UserController {
         return userService.removeById(id);
     }
 
-    /**
-     * 判断是否为管理员
-     *
-     * @param request 请求
-     * @return 是否为管理员
-     */
-    private boolean isAdmin(HttpServletRequest request) {
-        Object userObj = request.getSession().getAttribute(USER_LOGIN_STATUS);
-        User user = (User) userObj;
-        return user == null || user.getUserRole() != ADMIN_ROLE; // 不是管理员且未登录
-    }
+
 }

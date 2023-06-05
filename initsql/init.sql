@@ -13,6 +13,7 @@ create table user
     createTime   datetime     default CURRENT_TIMESTAMP null comment '数据插入时间',
     updateTime   datetime     default CURRENT_TIMESTAMP null on update CURRENT_TIMESTAMP comment '数据更新时间',
     isDelete     tinyint      default 0                 not null comment '逻辑删除(0未删除 1删除)'
+    userRole     int          default 0                 null comment '用户角色 0普通用户 1管理员'
 )
     comment '用户表';
 
