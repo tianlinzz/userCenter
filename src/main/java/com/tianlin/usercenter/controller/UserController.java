@@ -1,6 +1,10 @@
 package com.tianlin.usercenter.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.tianlin.usercenter.common.BaseResponse;
+import com.tianlin.usercenter.common.ErrorCode;
+import com.tianlin.usercenter.common.ResultUtils;
+import com.tianlin.usercenter.exception.BusinessException;
 import com.tianlin.usercenter.model.domain.User;
 import com.tianlin.usercenter.model.domain.request.UserLoginRequest;
 import com.tianlin.usercenter.model.domain.request.UserRegisterRequest;
@@ -42,80 +46,85 @@ public class UserController {
     }
 
     @PostMapping("/register")
-    public Long userRegister(@RequestBody UserRegisterRequest userRegisterRequest) {
+    public BaseResponse<Long> userRegister(@RequestBody UserRegisterRequest userRegisterRequest) {
         if (userRegisterRequest == null) {
-            return null;
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
         String userAccount = userRegisterRequest.getUserAccount();
         String userPassword = userRegisterRequest.getUserPassword();
         String checkPassword = userRegisterRequest.getCheckPassword();
-        if (userAccount == null || userPassword == null || checkPassword == null) {
-            return null;
+        String userCode = userRegisterRequest.getUserCode();
+
+        if (userAccount == null || userPassword == null || checkPassword == null || userCode == null) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
-        return userService.userRegister(userAccount, userPassword, checkPassword);
+        long result = userService.userRegister(userAccount, userPassword, checkPassword, userCode);
+        return ResultUtils.success(result);
     }
 
     @PostMapping("/login")
-    public User userLogin(@RequestBody UserLoginRequest userLoginRequest, HttpServletRequest request) {
+    public BaseResponse<User> userLogin(@RequestBody UserLoginRequest userLoginRequest, HttpServletRequest request) {
         if (userLoginRequest == null) {
-            return null;
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
         String userAccount = userLoginRequest.getUserAccount();
         String userPassword = userLoginRequest.getUserPassword();
         if (userAccount == null || userPassword == null) {
-            return null;
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
-        return userService.userLogin(userAccount, userPassword, request);
+        User result = userService.userLogin(userAccount, userPassword, request);
+        return ResultUtils.success(result);
     }
 
 
     @PostMapping("/logout")
-    public Integer userLogout(HttpServletRequest request) {
+    public BaseResponse<Integer> userLogout(HttpServletRequest request) {
         if (request == null) {
-            return null;
+            throw new BusinessException(ErrorCode.NULL_ERROR);
         }
-        return userService.userLogout(request);
+        Integer result = userService.userLogout(request);
+        return ResultUtils.success(result);
     }
 
     @GetMapping("/current")
-    public User userCurrent(HttpServletRequest request) {
+    public BaseResponse<User> userCurrent(HttpServletRequest request) {
         Object userObj = request.getSession().getAttribute(USER_LOGIN_STATUS);
         User currentUser = (User) userObj; // 强转
         if (currentUser == null) {
-            return null;
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
         long userId = currentUser.getId();
         User user = userService.getById(userId);
-        return userService.getSafetUser(user);
+        User result = userService.getSafetUser(user);
+        return ResultUtils.success(result);
     }
 
     @GetMapping("/list")
-    public List<User> userList(String username, HttpServletRequest request) {
+    public BaseResponse<List<User>> userList(String username, HttpServletRequest request) {
         // 鉴权
         if (isAdmin(request)) {
-            return new ArrayList<>();
+            throw new BusinessException(ErrorCode.NO_AUTH);
         }
-
         QueryWrapper<User> queryWrapper = new QueryWrapper<>();
         if (StringUtils.isNotBlank(username)) {
             queryWrapper.like("username", username);
         }
         List<User> userList = userService.list(queryWrapper);
-        return userList.stream().map(user -> userService.getSafetUser(user)).collect(Collectors.toList());
+        List<User> result = userList.stream().map(user -> userService.getSafetUser(user)).collect(Collectors.toList());
+        return ResultUtils.success(result);
     }
 
     @PostMapping("/delete")
-    public boolean userDelete(@RequestBody Long id,HttpServletRequest request) {
+    public BaseResponse<Boolean> userDelete(@RequestBody Long id,HttpServletRequest request) {
         // 鉴权
         if (isAdmin(request)) {
-            return false;
+            throw new BusinessException(ErrorCode.NO_AUTH);
         }
 
         if (id < 0) {
-            return false;
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "用户不存在");
         }
-        return userService.removeById(id);
+        boolean result = userService.removeById(id);
+        return ResultUtils.success(result);
     }
-
-
 }

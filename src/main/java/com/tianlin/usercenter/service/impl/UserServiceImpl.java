@@ -2,6 +2,8 @@ package com.tianlin.usercenter.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.tianlin.usercenter.common.ErrorCode;
+import com.tianlin.usercenter.exception.BusinessException;
 import com.tianlin.usercenter.mapper.UserMapper;
 import com.tianlin.usercenter.model.domain.User;
 import com.tianlin.usercenter.service.UserService;
@@ -57,37 +59,56 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         safetyUser.setCreateTime(originUser.getCreateTime());
         safetyUser.setUpdateTime(originUser.getUpdateTime());
         safetyUser.setUserRole(originUser.getUserRole());
+        safetyUser.setUserCode(originUser.getUserCode());
         return safetyUser;
     }
 
     @Override
-    public long userRegister(String userAccount, String userPassword, String checkPassword) {
+    public long userRegister(String userAccount, String userPassword, String checkPassword, String userCode) {
         // 1.校验
         if (StringUtils.isAnyBlank(userAccount, userPassword, checkPassword)) {
-            return -1;
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "账号或密码不能为空");
         }
         if (userAccount.length() < 4 || userAccount.length() > 16) {
-            return -1;
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "账号长度必须在4-16位之间");
         }
         if (userPassword.length() < 6 || userPassword.length() > 20) {
-            return -1;
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "密码长度必须在6-20位之间");
+        }
+        // 用户编码转化成整数只能大于零
+        int userCodeInt = Integer.parseInt(userCode);
+        if (userCodeInt < 0) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "用户编码必须大于零");
         }
         // 账号不能包含特殊字符,只能是字母数字下划线
         String reg = "^[a-zA-Z0-9_]+$";
         Matcher matcher = Pattern.compile(reg).matcher(userAccount);
         if (!matcher.find()) { // 如果包含特殊字符
-           return -1;
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "账号不能包含特殊字符");
+        }
+        // 用户编码是能是数字得组合
+        reg = "^[0-9]+$";
+        matcher = Pattern.compile(reg).matcher(userCode);
+        if (!matcher.find()) { // 如果包含不是数字的字符
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "用户编码只能是数字组合");
         }
         // 密码和校验密码相同
         if (!userPassword.equals(checkPassword)) {
-            return -1;
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "两次密码输入不一致");
         }
         // 判断账号是否存在
         QueryWrapper<User> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("userAccount", userAccount);
         long count = userMapper.selectCount(queryWrapper);
         if (count > 0) {
-            return -1;
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "账号已存在");
+        }
+        // 判断用户编码是否也存在了
+        queryWrapper.clear();  // 清空条件
+        queryWrapper.eq("userCode", userCode);
+        count = userMapper.selectCount(queryWrapper);
+        if (count > 0) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "用户编码已存在");
         }
         // 2.加密
         String newPassword = md5Password + userPassword + md5Password;
@@ -96,9 +117,10 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         User user = new User();
         user.setUserAccount(userAccount);
         user.setUserPassword(password);
+        user.setUserCode(userCode);
         boolean saveResult = this.save(user);
         if (!saveResult) {
-            return -1;
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "注册失败");
         }
         return user.getId();
     }

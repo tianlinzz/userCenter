@@ -1,10 +1,8 @@
 package com.tianlin.usercenter.model.domain;
 
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.annotation.*;
+
 import java.io.Serializable;
 import java.util.Date;
 import lombok.Data;
@@ -75,6 +73,7 @@ public class User implements Serializable {
     /**
      * 逻辑删除(0未删除 1删除)
      */
+    @TableLogic // 逻辑删除注解
     private Integer isDelete;
 
     /**
@@ -101,7 +100,7 @@ public class User implements Serializable {
         if (getClass() != that.getClass()) {
             return false;
         }
-        generator.domain.User other = (generator.domain.User) that;
+        User other = (User) that;
         return (this.getId() == null ? other.getId() == null : this.getId().equals(other.getId()))
                 && (this.getUsername() == null ? other.getUsername() == null : this.getUsername().equals(other.getUsername()))
                 && (this.getUserAccount() == null ? other.getUserAccount() == null : this.getUserAccount().equals(other.getUserAccount()))
