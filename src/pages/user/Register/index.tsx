@@ -17,10 +17,10 @@ const Register: React.FC = () => {
         message.success('注册成功！');
         history.push('/user/login');
       } else {
-        message.error(res.msg);
+        message.error(res.description);
       }
     } catch (error) {
-      message.error(res.msg);
+      message.error(res.description);
     }
   };
   return (
