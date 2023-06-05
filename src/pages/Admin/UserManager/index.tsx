@@ -130,7 +130,11 @@ const UserManager: React.FC = () => {
       columns={columns}
       actionRef={actionRef}
       cardBordered
-      request={async (): Promise<any> => await getUserList()}
+      request={async (): Promise<any> => {
+        return {
+          data: (await getUserList()) || [],
+        };
+      }}
       editable={{
         // 直接查源码去搜索配置项就好了，官网就是一坨答辩什么都没有
         type: 'multiple',
