@@ -35,13 +35,13 @@ const Login: React.FC = () => {
     }
   };
   const handleSubmit = async (values: API.LoginParams) => {
+    // 登录
+    const res = await login({
+      ...values,
+    });
     try {
-      // 登录
-      const usrInfo = await login({
-        ...values,
-      });
-
-      if (usrInfo !== null) {
+      const { data } = res;
+      if (data !== null) {
         const defaultLoginSuccessMessage = '登录成功！';
         message.success(defaultLoginSuccessMessage);
         await fetchUserInfo();
@@ -55,13 +55,12 @@ const Login: React.FC = () => {
         return;
       }
       // 如果失败去设置用户错误信息
-      setUserLoginState(usrInfo);
+      setUserLoginState(data);
     } catch (error) {
-      const defaultLoginFailureMessage = '登录失败，请重试！';
-      message.error(defaultLoginFailureMessage);
+      message.error(res.msg);
     }
   };
-  const { status } = userLoginState;
+  const { msg } = userLoginState;
   return (
     <div className={styles.container}>
       <div className={styles.content}>
@@ -85,7 +84,7 @@ const Login: React.FC = () => {
             await handleSubmit(values as API.LoginParams);
           }}
         >
-          {status === 'error' && <LoginMessage content={'错误的用户名和密码'} />}
+          {msg === 'error' && <LoginMessage content={'错误的用户名和密码'} />}
           <ProFormText
             name="userAccount"
             fieldProps={{

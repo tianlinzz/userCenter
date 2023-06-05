@@ -17,15 +17,17 @@ declare namespace API {
   };
 
   type LoginResult = {
-    status?: string;
-    type?: string;
-    currentAuthority?: string;
+    code?: number;
+    data?: Object;
+    msg?: string;
+    description?: string;
   };
 
-  type RegisterResult = {
-    status?: string;
-    type?: string;
-    currentAuthority?: string;
+  type ResResult = {
+    code?: number;
+    data?: Object;
+    msg?: string;
+    description?: string;
   };
 
   type PageParams = {
@@ -48,13 +50,6 @@ declare namespace API {
     progress?: number;
   };
 
-  type RuleList = {
-    data?: RuleListItem[];
-    /** 列表的内容总数 */
-    total?: number;
-    success?: boolean;
-  };
-
   type FakeCaptcha = {
     code?: number;
     status?: string;
@@ -70,22 +65,7 @@ declare namespace API {
     userAccount?: string;
     userPassword?: string;
     checkPassword?: string;
-  };
-
-  type ErrorResponse = {
-    /** 业务约定的错误码 */
-    errorCode: string;
-    /** 业务上的错误信息 */
-    errorMessage?: string;
-    /** 业务上的请求是否成功 */
-    success?: boolean;
-  };
-
-  type NoticeIconList = {
-    data?: NoticeIconItem[];
-    /** 列表的内容总数 */
-    total?: number;
-    success?: boolean;
+    userCode?: string;
   };
 
   type NoticeIconItemType = 'notification' | 'message' | 'event';

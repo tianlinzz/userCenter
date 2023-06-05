@@ -7,6 +7,7 @@ import type { RequestConfig, RunTimeLayoutConfig } from 'umi';
 import { history, Link } from 'umi';
 import defaultSettings from '../config/defaultSettings';
 import { currentUser as queryCurrentUser } from './services/ant-design-pro/api';
+import { message } from 'antd';
 
 const isDev = process.env.NODE_ENV === 'development';
 const loginPath = '/user/login';
@@ -30,9 +31,14 @@ export async function getInitialState(): Promise<{
   fetchUserInfo?: () => Promise<API.CurrentUser | undefined>;
 }> {
   const fetchUserInfo = async () => {
+    const res = await queryCurrentUser();
     try {
-      return await queryCurrentUser();
+      if (res.code === 200) {
+        return res.data;
+      }
+      return;
     } catch (error) {
+      message.error(res.msg);
       const { location } = history;
       // 如果是白名单，不执行
       if (weightList.includes(location.pathname)) return;

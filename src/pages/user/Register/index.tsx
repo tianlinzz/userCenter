@@ -10,17 +10,17 @@ import { register } from '@/services/ant-design-pro/api';
 
 const Register: React.FC = () => {
   const handleSubmit = async (values: API.RegisterParams) => {
+    // 注册
+    const res = await register({ ...values });
     try {
-      // 注册
-      const res = await register({ ...values });
-      if (res > 0) {
+      if (res.code === 200) {
         message.success('注册成功！');
         history.push('/user/login');
       } else {
-        message.error('注册失败，请重试！');
+        message.error(res.msg);
       }
     } catch (error) {
-      message.error('注册失败，请重试！');
+      message.error(res.msg);
     }
   };
   return (
@@ -112,6 +112,20 @@ const Register: React.FC = () => {
                   return Promise.reject(new Error('校验密码和密码不一致！'));
                 },
               }),
+            ]}
+          />
+          <ProFormText
+            name="userCode"
+            fieldProps={{
+              size: 'large',
+              prefix: <UserOutlined className={styles.prefixIcon} />,
+            }}
+            placeholder={'请输入你对应的用户编码'}
+            rules={[
+              {
+                required: true,
+                message: '用户编码是必填项！',
+              },
             ]}
           />
         </LoginForm>

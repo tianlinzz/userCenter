@@ -18,9 +18,10 @@ export const waitTime = async (time: number = 100) => {
 
 const columns: ProColumns<API.CurrentUser>[] = [
   {
+    title: '用户id',
     dataIndex: 'id',
     valueType: 'indexBorder',
-    width: 48,
+    width: 72,
     align: 'center',
   },
   {
@@ -75,6 +76,12 @@ const columns: ProColumns<API.CurrentUser>[] = [
     align: 'center',
   },
   {
+    title: '用户编码',
+    dataIndex: 'userCode',
+    ellipsis: true,
+    align: 'center',
+  },
+  {
     title: '角色',
     dataIndex: 'userRole',
     valueEnum: {
@@ -123,13 +130,16 @@ const UserManager: React.FC = () => {
       columns={columns}
       actionRef={actionRef}
       cardBordered
-      request={async (): Promise<any> => {
-        return {
-          data: (await getUserList()) || [],
-        };
-      }}
+      request={async (): Promise<any> => await getUserList()}
       editable={{
+        // 直接查源码去搜索配置项就好了，官网就是一坨答辩什么都没有
         type: 'multiple',
+        onSave: async (key, row): Promise<any | void> => {
+          console.log(key, row);
+        },
+        onDelete: async (key, row): Promise<any | void> => {
+          console.log(key, row);
+        },
       }}
       columnsState={{
         persistenceKey: 'pro-table-singe-demos',
