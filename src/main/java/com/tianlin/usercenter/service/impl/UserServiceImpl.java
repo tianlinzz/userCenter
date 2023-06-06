@@ -130,19 +130,19 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
     public User userLogin(String userAccount, String userPassword, HttpServletRequest request) {
         // 1.校验
         if (StringUtils.isAnyBlank(userAccount, userPassword)) {
-            return null;
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "账号或密码不能为空");
         }
         if (userAccount.length() < 4 || userAccount.length() > 16) {
-            return null;
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "账号长度必须在4-16位之间");
         }
         if (userPassword.length() < 6 || userPassword.length() > 20) {
-            return null;
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "密码长度必须在6-20位之间");
         }
         // 账号不能包含特殊字符,只能是字母数字下划线
         String reg = "^[a-zA-Z0-9_]+$";
         Matcher matcher = Pattern.compile(reg).matcher(userAccount);
         if (!matcher.find()) { // 如果包含特殊字符
-            return null;
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "账号不能包含特殊字符");
         }
         // 2.加密
         String newPassword = md5Password + userPassword + md5Password;
@@ -155,7 +155,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         // 用户不存在或密码错误
         if (user == null) {
             log.info("user longin fail, userAccount can not find or userPassword error");
-            return null;
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "账号或密码错误");
         }
         // 3.返回用户信息,不包含密码
         User safetyUser = getSafetUser(user);
