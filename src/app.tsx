@@ -9,6 +9,7 @@ import defaultSettings from '../config/defaultSettings';
 import { currentUser as queryCurrentUser } from './services/ant-design-pro/api';
 import { message } from 'antd';
 import type { RequestOptionsInit } from 'umi-request';
+import * as process from 'process';
 
 const isDev = process.env.NODE_ENV === 'development';
 const loginPath = '/user/login';
@@ -139,9 +140,9 @@ const handelResponse = async (response: Response): Promise<any> => {
   // 其他错误的抛出，最好是异步错误，这样可以被内部封装的request捕获。然后还得是错误对象，这样才能被全局错误处理捕获
   return Promise.reject(new Error(res.description || res.msg || '网络错误'));
 };
-
+const prefix = process.env.NODE_ENV === 'production' ? 'https://baidu.com' : '/api'; // 开发环境下，代理到本地后端服务
 export const request: RequestConfig = {
-  prefix: '/api',
+  prefix,
   timeout: 1000 * 10,
   requestInterceptors: [handelRequest],
   responseInterceptors: [handelResponse],
