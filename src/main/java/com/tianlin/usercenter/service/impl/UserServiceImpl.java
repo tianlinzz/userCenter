@@ -190,16 +190,13 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         if (!matcher.find()) { // 如果包含特殊字符
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "账号不能包含特殊字符");
         }
-        // 2.加密
-        String newPassword = md5Password + userInfo.getUserPassword() + md5Password;
-        String password = DigestUtils.md5DigestAsHex(newPassword.getBytes());
        // 头像必须是网络地址
         if (StringUtils.isNotBlank(userInfo.getAvatarUrl())) {
             if (!userInfo.getAvatarUrl().startsWith("http")) {
                 throw new BusinessException(ErrorCode.PARAMS_ERROR, "头像必须是网络地址");
             }
         }
-        userInfo.setUserPassword(password);
+        // TODO 需要专门提供接口修改密码的
         // TODO 需要校验邮箱和手机号格式
         return userInfo;
     }
