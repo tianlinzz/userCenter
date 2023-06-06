@@ -1,8 +1,8 @@
 import type { ActionType, ProColumns } from '@ant-design/pro-components';
 import { ProTable, TableDropdown } from '@ant-design/pro-components';
 import React, { useRef } from 'react';
-import { getUserList } from '@/services/ant-design-pro/api';
-import { Image } from 'antd';
+import { getUserList, deleteUser, updateUser } from '@/services/ant-design-pro/api';
+import { Image, message } from 'antd';
 
 export const waitTimePromise = async (time: number = 100) => {
   return new Promise((resolve) => {
@@ -138,11 +138,17 @@ const UserManager: React.FC = () => {
       editable={{
         // 直接查源码去搜索配置项就好了，官网就是一坨答辩什么都没有
         type: 'multiple',
-        onSave: async (key, row): Promise<any | void> => {
-          console.log(key, row);
+        onSave: async (_, row): Promise<any | void> => {
+          console.log(row);
+          await updateUser(row);
+          message.success('更新成功');
         },
-        onDelete: async (key, row): Promise<any | void> => {
-          console.log(key, row);
+        onDelete: async (key): Promise<any | void> => {
+          const payload: API.DeleteUserParams = {
+            id: +key,
+          };
+          await deleteUser(payload);
+          message.success('删除成功');
         },
       }}
       columnsState={{

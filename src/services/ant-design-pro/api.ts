@@ -49,6 +49,28 @@ export async function register(body: API.RegisterParams, options?: { [key: strin
     ...(options || {}),
   });
 }
+/** 注删除接口 POST /user/delete */
+export async function deleteUser(body: API.DeleteUserParams, options?: { [key: string]: any }) {
+  return request<API.ResResult>('/user/delete', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    data: body,
+    ...(options || {}),
+  });
+}
+/** 修改用户接口 GET /user/update */
+export async function updateUser(body: API.CurrentUser, options?: { [key: string]: any }) {
+  return request<API.ResResult>('/user/update', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    data: body,
+    ...(options || {}),
+  });
+}
 
 /** 此处后端没有提供注释 GET /api/notices */
 export async function getNotices(options?: { [key: string]: any }) {

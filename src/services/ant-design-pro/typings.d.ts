@@ -40,6 +40,10 @@ declare namespace API {
     pageSize?: number;
   };
 
+  type DeleteUserParams = {
+    id?: number;
+  };
+
   type RuleListItem = {
     key?: number;
     disabled?: boolean;
