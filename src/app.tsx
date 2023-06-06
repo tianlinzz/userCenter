@@ -126,18 +126,18 @@ const handelRequest = (
   return { url, options };
 };
 const handelResponse = async (response: Response): Promise<any> => {
-  const res: API.ResResult = await response.clone().json();
+  const res: API.ResResult = await response.clone().json(); // 克隆一份响应然后json化，不然会报错
   if (res.code === 200) {
     // 成功, 直接返回数据
     return res.data;
   }
   if (res.code === 40100) {
-    message.error('登录过期，请重新登录');
     // 未登录，跳转到登录页
+    message.error('登陆状态过期，请重新登录！');
     return history.push(loginPath);
-  } else {
-    throw new Error(res.msg); //其它错误，就直接抛出抛出错误信息，让业务去处理
   }
+  // 其他错误的抛出，最好是异步错误，这样可以被内部封装的request捕获。然后还得是错误对象，这样才能被全局错误处理捕获
+  return Promise.reject(new Error(res.description || '网络错误'));
 };
 
 export const request: RequestConfig = {
