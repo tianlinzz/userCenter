@@ -1,4 +1,4 @@
-create table if not exists tianlin.user
+create table tianlin.user
 (
     id           bigint auto_increment comment '用户id'
         primary key,

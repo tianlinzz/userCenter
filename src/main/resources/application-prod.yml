@@ -1,0 +1,11 @@
+# prod，生产环境配置文件
+spring:
+  application:
+    name: user-center
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://sh-cynosdbmysql-grp-2rihw052.sql.tencentcdb.com:21724/tianlin?uesSSL=false # 配置生产环境数据库，这里使用的是本地数据库
+    username: root
+    password: '@Tian1008' # 配置生产环境数据库密码，上线最好不要暴露密码
+  session:
+    timeout: 86400  # session过期时间, 两天
