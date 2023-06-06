@@ -8,6 +8,7 @@ import { history, Link } from 'umi';
 import defaultSettings from '../config/defaultSettings';
 import { currentUser as queryCurrentUser } from './services/ant-design-pro/api';
 import { message } from 'antd';
+import type { RequestOptionsInit } from 'umi-request';
 
 const isDev = process.env.NODE_ENV === 'development';
 const loginPath = '/user/login';
@@ -30,15 +31,11 @@ export async function getInitialState(): Promise<{
   loading?: boolean;
   fetchUserInfo?: () => Promise<API.CurrentUser | undefined>;
 }> {
-  const fetchUserInfo = async () => {
+  const fetchUserInfo = async (): Promise<any> => {
     const res = await queryCurrentUser();
     try {
-      if (res.code === 200) {
-        return res.data;
-      }
-      return;
+      return res;
     } catch (error) {
-      message.error(res.msg);
       const { location } = history;
       // 如果是白名单，不执行
       if (weightList.includes(location.pathname)) return;
@@ -122,7 +119,30 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
   };
 };
 
+const handelRequest = (
+  url: string,
+  options: RequestOptionsInit,
+): { url?: string; options?: RequestOptionsInit } => {
+  return { url, options };
+};
+const handelResponse = async (response: Response): Promise<any> => {
+  const res: API.ResResult = await response.clone().json();
+  if (res.code === 200) {
+    // 成功, 直接返回数据
+    return res.data;
+  }
+  if (res.code === 40100) {
+    message.error('登录过期，请重新登录');
+    // 未登录，跳转到登录页
+    return history.push(loginPath);
+  } else {
+    throw new Error(res.msg); //其它错误，就直接抛出抛出错误信息，让业务去处理
+  }
+};
+
 export const request: RequestConfig = {
   prefix: '/api',
   timeout: 1000 * 10,
+  requestInterceptors: [handelRequest],
+  responseInterceptors: [handelResponse],
 };

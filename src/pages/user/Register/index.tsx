@@ -11,17 +11,9 @@ import { register } from '@/services/ant-design-pro/api';
 const Register: React.FC = () => {
   const handleSubmit = async (values: API.RegisterParams) => {
     // 注册
-    const res = await register({ ...values });
-    try {
-      if (res.code === 200) {
-        message.success('注册成功！');
-        history.push('/user/login');
-      } else {
-        message.error(res.description);
-      }
-    } catch (error) {
-      message.error(res.description);
-    }
+    await register({ ...values });
+    message.success('注册成功！');
+    history.push('/user/login');
   };
   return (
     <div className={styles.container}>

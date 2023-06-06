@@ -22,7 +22,7 @@ const LoginMessage: React.FC<{
 );
 
 const Login: React.FC = () => {
-  const [userLoginState, setUserLoginState] = useState<API.ResResult>({});
+  const [userLoginState, setUserLoginState] = useState<API.LoginResult>({});
   const { initialState, setInitialState } = useModel('@@initialState');
 
   const fetchUserInfo = async () => {
@@ -36,31 +36,26 @@ const Login: React.FC = () => {
   };
   const handleSubmit = async (values: API.LoginParams) => {
     // 登录
-    const res = await login({
+    const usrInfo = await login({
       ...values,
     });
-    try {
-      const { data } = res;
-      if (data !== null) {
-        const defaultLoginSuccessMessage = '登录成功！';
-        message.success(defaultLoginSuccessMessage);
-        await fetchUserInfo();
-        /** 此方法会跳转到 redirect 参数所在的位置 */
-        if (!history) return;
-        const { query } = history.location;
-        const { redirect } = query as {
-          redirect: string;
-        };
-        history.push(redirect || '/');
-        return;
-      }
-      // 如果失败去设置用户错误信息
-      setUserLoginState(res);
-    } catch (error) {
-      message.error(res.msg);
+    if (usrInfo !== null) {
+      const defaultLoginSuccessMessage = '登录成功！';
+      message.success(defaultLoginSuccessMessage);
+      await fetchUserInfo();
+      /** 此方法会跳转到 redirect 参数所在的位置 */
+      if (!history) return;
+      const { query } = history.location;
+      const { redirect } = query as {
+        redirect: string;
+      };
+      history.push(redirect || '/');
+      return;
     }
+    // 如果失败去设置用户错误信息
+    setUserLoginState(usrInfo);
   };
-  const { msg } = userLoginState;
+  const { status } = userLoginState;
   return (
     <div className={styles.container}>
       <div className={styles.content}>
@@ -84,7 +79,7 @@ const Login: React.FC = () => {
             await handleSubmit(values as API.LoginParams);
           }}
         >
-          {msg === 'error' && <LoginMessage content={'错误的用户名和密码'} />}
+          {status === 'error' && <LoginMessage content={'错误的用户名和密码'} />}
           <ProFormText
             name="userAccount"
             fieldProps={{

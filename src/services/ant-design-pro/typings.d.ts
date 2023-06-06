@@ -4,8 +4,8 @@
 declare namespace API {
   type ResResult = {
     code?: number;
-    data?: Object;
     msg?: string;
+    data?: any;
     description?: string;
   };
 
@@ -24,10 +24,9 @@ declare namespace API {
   };
 
   type LoginResult = {
-    code?: number;
-    data?: Object;
-    msg?: string;
-    description?: string;
+    status?: string;
+    type?: string;
+    currentAuthority?: string;
   };
 
   type RegisterResult = {
@@ -78,7 +77,6 @@ declare namespace API {
     userAccount?: string;
     userPassword?: string;
     checkPassword?: string;
-    userCode?: string;
   };
 
   type ErrorResponse = {
