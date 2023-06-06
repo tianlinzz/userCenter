@@ -172,6 +172,38 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         return 1;
     }
 
+    @Override
+    public User checkUserInfo(User userInfo) {
+        // 1.校验
+        if (userInfo == null) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "用户信息不能为空");
+        }
+        if (StringUtils.isAnyBlank(userInfo.getUserAccount())) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "账号不能为空");
+        }
+        if (userInfo.getUserAccount().length() < 4 || userInfo.getUserAccount().length() > 16) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "账号长度必须在4-16位之间");
+        }
+        // 账号不能包含特殊字符,只能是字母数字下划线
+        String reg = "^[a-zA-Z0-9_]+$";
+        Matcher matcher = Pattern.compile(reg).matcher(userInfo.getUserAccount());
+        if (!matcher.find()) { // 如果包含特殊字符
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "账号不能包含特殊字符");
+        }
+        // 2.加密
+        String newPassword = md5Password + userInfo.getUserPassword() + md5Password;
+        String password = DigestUtils.md5DigestAsHex(newPassword.getBytes());
+       // 头像必须是网络地址
+        if (StringUtils.isNotBlank(userInfo.getAvatarUrl())) {
+            if (!userInfo.getAvatarUrl().startsWith("http")) {
+                throw new BusinessException(ErrorCode.PARAMS_ERROR, "头像必须是网络地址");
+            }
+        }
+        userInfo.setUserPassword(password);
+        // TODO 需要校验邮箱和手机号格式
+        return userInfo;
+    }
+
 }
 
 

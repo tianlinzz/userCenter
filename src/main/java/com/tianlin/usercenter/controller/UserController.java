@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -115,16 +114,31 @@ public class UserController {
     }
 
     @PostMapping("/delete")
-    public BaseResponse<Boolean> userDelete(@RequestBody Long id,HttpServletRequest request) {
+    public BaseResponse<Boolean> userDelete(@RequestBody User body,HttpServletRequest request) {
         // 鉴权
         if (isAdmin(request)) {
             throw new BusinessException(ErrorCode.NO_AUTH);
         }
-
+        Long id = body.getId();
         if (id < 0) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "用户不存在");
         }
         boolean result = userService.removeById(id);
+        return ResultUtils.success(result);
+    }
+
+    @PostMapping("/update")
+    public BaseResponse<Boolean> userUpdate(@RequestBody User body,HttpServletRequest request) {
+        // 鉴权
+        if (isAdmin(request)) {
+            throw new BusinessException(ErrorCode.NO_AUTH);
+        }
+        Long id = body.getId();
+        if (id < 0) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "用户不存在");
+        }
+        User userInfo = userService.checkUserInfo(body);
+        boolean result = userService.updateById(userInfo);
         return ResultUtils.success(result);
     }
 }

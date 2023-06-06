@@ -44,4 +44,6 @@ public interface UserService extends IService<User> {
      */
     int userLogout(HttpServletRequest request);
 
+    // 校验用户信息是否合法
+    User checkUserInfo(User userInfo);
 }
