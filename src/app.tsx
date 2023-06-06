@@ -133,11 +133,11 @@ const handelResponse = async (response: Response): Promise<any> => {
   }
   if (res.code === 40100) {
     // 未登录，跳转到登录页
-    message.error('登陆状态过期，请重新登录！');
+    message.error('请登录！');
     return history.push(loginPath);
   }
   // 其他错误的抛出，最好是异步错误，这样可以被内部封装的request捕获。然后还得是错误对象，这样才能被全局错误处理捕获
-  return Promise.reject(new Error(res.description || '网络错误'));
+  return Promise.reject(new Error(res.description || res.msg || '网络错误'));
 };
 
 export const request: RequestConfig = {
