@@ -139,7 +139,6 @@ const UserManager: React.FC = () => {
         // 直接查源码去搜索配置项就好了，官网就是一坨答辩什么都没有
         type: 'multiple',
         onSave: async (_, row): Promise<any | void> => {
-          console.log(row);
           await updateUser(row);
           message.success('更新成功');
         },
