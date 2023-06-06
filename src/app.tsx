@@ -7,7 +7,6 @@ import type { RequestConfig, RunTimeLayoutConfig } from 'umi';
 import { history, Link } from 'umi';
 import defaultSettings from '../config/defaultSettings';
 import { currentUser as queryCurrentUser } from './services/ant-design-pro/api';
-import { message } from 'antd';
 import type { RequestOptionsInit } from 'umi-request';
 import * as process from 'process';
 
@@ -130,15 +129,15 @@ const handelResponse = async (response: Response): Promise<any> => {
   const res: API.ResResult = await response.clone().json(); // 克隆一份响应然后json化，不然会报错
   if (res.code === 200) {
     // 成功, 直接返回数据
-    return res.data;
+    return res?.data;
   }
-  if (res.code === 40100) {
+  if (res?.code === 40100) {
     // 未登录，跳转到登录页
-    message.error('请登录！');
-    return history.push(loginPath);
+    history.push(loginPath);
+    return Promise.reject(new Error('请先登录'));
   }
   // 其他错误的抛出，最好是异步错误，这样可以被内部封装的request捕获。然后还得是错误对象，这样才能被全局错误处理捕获
-  return Promise.reject(new Error(res.description || res.msg || '网络错误'));
+  return Promise.reject(new Error(res?.description || res?.msg || '网络错误'));
 };
 const prefix = process.env.NODE_ENV === 'production' ? 'https://localhost:8080' : '/api'; // 开发环境下，代理到本地后端服务
 export const request: RequestConfig = {
