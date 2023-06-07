@@ -121,7 +121,7 @@ const handelRequest = (
   const token = localStorage.getItem('token') as string;
   if (token) {
     const addHeaders = {
-      Authorization: JSON.parse(JSON.stringify(token)),
+      Authorization: JSON.parse(token),
     };
     // @ts-ignore
     options.headers = {
