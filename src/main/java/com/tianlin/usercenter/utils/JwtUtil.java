@@ -38,10 +38,6 @@ public class JwtUtil {
 
     // 解析 JWT 签名
     public static Long parseToken(String token) {
-        // 检查token 是否过期
-        if (isTokenExpired(token)) {
-            return null;
-        }
         // 解析 JWT
         Claims parsedClaims = Jwts.parserBuilder()
                 .setSigningKey(JWT_SECRET)

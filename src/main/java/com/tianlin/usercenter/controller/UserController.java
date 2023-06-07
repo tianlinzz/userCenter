@@ -54,10 +54,10 @@ public class UserController {
             throw new BusinessException(ErrorCode.NULL_ERROR);
         }
         String token = request.getHeader("Authorization");
-        Long id = JwtUtil.parseToken(token);
-        if (id == null) {
+        if (StringUtils.isBlank(token) || JwtUtil.isTokenExpired(token)) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "登录过期");
         }
+        Long id = JwtUtil.parseToken(token);
         User user = userService.getById(id);
         if (user == null) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "用户不存在");
