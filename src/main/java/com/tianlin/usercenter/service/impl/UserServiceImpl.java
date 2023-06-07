@@ -168,7 +168,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         // 1.清除session中的用户登录状态
         String token = request.getHeader("Authorization");
         // 2.设置token过期
-        JwtUtil.refreshToken(token);
+        JwtUtil.invalidateToken(token);
         return 1;
     }
 

@@ -64,19 +64,16 @@ public class JwtUtil {
         return expiration.before(new Date());
     }
 
-    // 设置token过期
-    public static void refreshToken(String token) {
+    // 让当前token过期
+    public static void invalidateToken(String token) {
         // 解析 JWT
         Claims parsedClaims = Jwts.parserBuilder()
                 .setSigningKey(JWT_SECRET)
                 .build()
                 .parseClaimsJws(getToken(token))
                 .getBody();
-        // 生成签发时间和过期时间
-        Date now = new Date();
-        Date expireTimeDate = new Date(now.getTime() + EXPIRE_TIME);
-        // 直接设置改token的起始时间为过期时间，这样就会过期了
-        parsedClaims.setIssuedAt(expireTimeDate);
+        // 让当前token过期
+        parsedClaims.setExpiration(new Date());
     }
 
     public static String getToke(User user) {
