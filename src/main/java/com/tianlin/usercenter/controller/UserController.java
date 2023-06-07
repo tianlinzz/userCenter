@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static com.tianlin.usercenter.constant.UserConstant.ADMIN_ROLE;
-import static com.tianlin.usercenter.constant.UserConstant.USER_LOGIN_STATUS;
+
 
 /**
  * 用户接口

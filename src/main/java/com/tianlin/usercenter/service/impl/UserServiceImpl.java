@@ -18,7 +18,6 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static com.tianlin.usercenter.constant.UserConstant.USER_LOGIN_STATUS;
 
 /**
 * @author 天琳
