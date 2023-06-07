@@ -8,9 +8,13 @@ spring:
     username: root
     password: root
   session:
-    timeout: 86400  # session过期时间, 两天
+    timeout: 604800  # session过期时间, 两天
 server:
   port: 8080
+  reactive:
+    session:
+      cookie:
+        secure: false
 #  servlet:
 #   context-path: /api
 mybatis-plus:
