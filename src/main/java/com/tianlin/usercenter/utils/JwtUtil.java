@@ -70,7 +70,7 @@ public class JwtUtil {
         Claims parsedClaims = Jwts.parserBuilder()
                 .setSigningKey(JWT_SECRET)
                 .build()
-                .parseClaimsJws(token)
+                .parseClaimsJws(getToken(token))
                 .getBody();
         // 生成签发时间和过期时间
         Date now = new Date();
