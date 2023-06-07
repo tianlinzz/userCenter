@@ -3,26 +3,12 @@ import { login } from '@/services/ant-design-pro/api';
 import { LockOutlined, UserOutlined } from '@ant-design/icons';
 import { LoginForm, ProFormCheckbox, ProFormText } from '@ant-design/pro-components';
 import { SYSTEM_LOGO } from '@/pages/constant';
-import { Alert, message } from 'antd';
-import React, { useState } from 'react';
+import { message } from 'antd';
+import React from 'react';
 import { history, useModel } from 'umi';
 import styles from './index.less';
 
-const LoginMessage: React.FC<{
-  content: string;
-}> = ({ content }) => (
-  <Alert
-    style={{
-      marginBottom: 24,
-    }}
-    message={content}
-    type="error"
-    showIcon
-  />
-);
-
 const Login: React.FC = () => {
-  const [userLoginState, setUserLoginState] = useState<API.LoginResult>({});
   const { initialState, setInitialState } = useModel('@@initialState');
 
   const fetchUserInfo = async () => {
@@ -36,10 +22,8 @@ const Login: React.FC = () => {
   };
   const handleSubmit = async (values: API.LoginParams) => {
     // 登录
-    const usrInfo = await login({
-      ...values,
-    });
-    if (usrInfo) {
+    await login({ ...values });
+    try {
       const defaultLoginSuccessMessage = '登录成功！';
       message.success(defaultLoginSuccessMessage);
       await fetchUserInfo();
@@ -51,11 +35,10 @@ const Login: React.FC = () => {
       };
       history.push(redirect || '/');
       return;
+    } catch (error: Error | any) {
+      message.error(error?.message || '登录失败，请重试！');
     }
-    // 如果失败去设置用户错误信息
-    setUserLoginState(usrInfo);
   };
-  const { status } = userLoginState;
   return (
     <div className={styles.container}>
       <div className={styles.content}>
@@ -79,7 +62,6 @@ const Login: React.FC = () => {
             await handleSubmit(values as API.LoginParams);
           }}
         >
-          {status === 'error' && <LoginMessage content={'错误的用户名和密码'} />}
           <ProFormText
             name="userAccount"
             fieldProps={{
