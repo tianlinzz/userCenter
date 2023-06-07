@@ -9,6 +9,7 @@ import com.tianlin.usercenter.model.domain.User;
 import com.tianlin.usercenter.model.domain.request.UserLoginRequest;
 import com.tianlin.usercenter.model.domain.request.UserRegisterRequest;
 import com.tianlin.usercenter.service.UserService;
+import com.tianlin.usercenter.utils.JwtUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
@@ -35,13 +36,33 @@ public class UserController {
     /**
      * 判断是否为管理员
      *
-     * @param request 请求
+     * @param user 当前用户
      * @return 是否为管理员
      */
-    private boolean isAdmin(HttpServletRequest request) {
-        Object userObj = request.getSession().getAttribute(USER_LOGIN_STATUS);
-        User user = (User) userObj;
+    private boolean isAdmin(User user) {
         return user == null || user.getUserRole() != ADMIN_ROLE; // 不是管理员且未登录
+    }
+
+    /**
+     * 获取当前用户
+     *
+     * @param request 请求
+     * @return 当前用户
+     */
+    private User getCurrentUser(HttpServletRequest request) {
+        if (request == null) {
+            throw new BusinessException(ErrorCode.NULL_ERROR);
+        }
+        String token = request.getHeader("Authorization");
+        Long id = JwtUtil.parseToken(token);
+        if (id == null) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "登录过期");
+        }
+        User user = userService.getById(id);
+        if (user == null) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "用户不存在");
+        }
+        return user;
     }
 
     @PostMapping("/register")
@@ -62,7 +83,7 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public BaseResponse<User> userLogin(@RequestBody UserLoginRequest userLoginRequest, HttpServletRequest request) {
+    public BaseResponse<String> userLogin(@RequestBody UserLoginRequest userLoginRequest) {
         if (userLoginRequest == null) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
@@ -71,7 +92,7 @@ public class UserController {
         if (userAccount == null || userPassword == null) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
-        User result = userService.userLogin(userAccount, userPassword, request);
+        String result = userService.userLogin(userAccount, userPassword);
         return ResultUtils.success(result);
     }
 
@@ -87,13 +108,7 @@ public class UserController {
 
     @GetMapping("/current")
     public BaseResponse<User> userCurrent(HttpServletRequest request) {
-        Object userObj = request.getSession().getAttribute(USER_LOGIN_STATUS);
-        User currentUser = (User) userObj; // 强转
-        if (currentUser == null) {
-            throw new BusinessException(ErrorCode.NOT_LOGIN);
-        }
-        long userId = currentUser.getId();
-        User user = userService.getById(userId);
+        User user = getCurrentUser(request);
         User result = userService.getSafetUser(user);
         return ResultUtils.success(result);
     }
@@ -101,7 +116,7 @@ public class UserController {
     @GetMapping("/list")
     public BaseResponse<List<User>> userList(String username, HttpServletRequest request) {
         // 鉴权
-        if (isAdmin(request)) {
+        if (isAdmin(getCurrentUser(request))) {
             throw new BusinessException(ErrorCode.NO_AUTH);
         }
         QueryWrapper<User> queryWrapper = new QueryWrapper<>();
@@ -116,7 +131,7 @@ public class UserController {
     @PostMapping("/delete")
     public BaseResponse<Boolean> userDelete(@RequestBody User body,HttpServletRequest request) {
         // 鉴权
-        if (isAdmin(request)) {
+        if (isAdmin(getCurrentUser(request))) {
             throw new BusinessException(ErrorCode.NO_AUTH);
         }
         Long id = body.getId();
@@ -130,7 +145,7 @@ public class UserController {
     @PostMapping("/update")
     public BaseResponse<Boolean> userUpdate(@RequestBody User body,HttpServletRequest request) {
         // 鉴权
-        if (isAdmin(request)) {
+        if (isAdmin(getCurrentUser(request))) {
             throw new BusinessException(ErrorCode.NO_AUTH);
         }
         Long id = body.getId();
@@ -141,4 +156,5 @@ public class UserController {
         boolean result = userService.updateById(userInfo);
         return ResultUtils.success(result);
     }
+
 }

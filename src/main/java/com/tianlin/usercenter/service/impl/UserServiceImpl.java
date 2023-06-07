@@ -7,6 +7,7 @@ import com.tianlin.usercenter.exception.BusinessException;
 import com.tianlin.usercenter.mapper.UserMapper;
 import com.tianlin.usercenter.model.domain.User;
 import com.tianlin.usercenter.service.UserService;
+import com.tianlin.usercenter.utils.JwtUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
@@ -127,7 +128,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
 
 
     @Override
-    public User userLogin(String userAccount, String userPassword, HttpServletRequest request) {
+    public String userLogin(String userAccount, String userPassword) {
         // 1.校验
         if (StringUtils.isAnyBlank(userAccount, userPassword)) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "账号或密码不能为空");
@@ -157,19 +158,17 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
             log.info("user longin fail, userAccount can not find or userPassword error");
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "账号或密码错误");
         }
-        // 3.返回用户信息,不包含密码
-        User safetyUser = getSafetUser(user);
-        // 4.记录用户的登录状态
-        request.getSession().setAttribute(USER_LOGIN_STATUS, safetyUser);
-        User user1 = (User) request.getSession().getAttribute(USER_LOGIN_STATUS);
+        String token = JwtUtil.getToke(user);
         // 5.返回用户信息
-        return getSafetUser(user);
+        return "Bearer " + token;
     }
 
     @Override
     public int userLogout(HttpServletRequest request) {
         // 1.清除session中的用户登录状态
-        request.getSession().removeAttribute(USER_LOGIN_STATUS);
+        String token = request.getHeader("Authorization");
+        // 2.设置token过期
+        JwtUtil.refreshToken(token);
         return 1;
     }
 
