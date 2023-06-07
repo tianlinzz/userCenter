@@ -10,7 +10,6 @@ import styles from './index.less';
 
 const Login: React.FC = () => {
   const { initialState, setInitialState } = useModel('@@initialState');
-
   const fetchUserInfo = async () => {
     const userInfo = await initialState?.fetchUserInfo?.();
     if (userInfo) {
@@ -22,22 +21,17 @@ const Login: React.FC = () => {
   };
   const handleSubmit = async (values: API.LoginParams) => {
     // 登录
-    await login({ ...values });
-    try {
-      const defaultLoginSuccessMessage = '登录成功！';
-      message.success(defaultLoginSuccessMessage);
-      await fetchUserInfo();
-      /** 此方法会跳转到 redirect 参数所在的位置 */
-      if (!history) return;
-      const { query } = history.location;
-      const { redirect } = query as {
-        redirect: string;
-      };
-      history.push(redirect || '/');
-      return;
-    } catch (error: Error | any) {
-      message.error(error?.message || '登录失败，请重试！');
-    }
+    const token = (await login({ ...values })) as string;
+    localStorage.setItem('token', token);
+    message.success('登录成功！');
+    await fetchUserInfo();
+    /** 此方法会跳转到 redirect 参数所在的位置 */
+    if (!history) return;
+    const { query } = history.location;
+    const { redirect } = query as {
+      redirect: string;
+    };
+    history.push(redirect || '/');
   };
   return (
     <div className={styles.container}>

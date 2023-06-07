@@ -7,15 +7,15 @@ import type { RequestConfig, RunTimeLayoutConfig } from 'umi';
 import { history, Link } from 'umi';
 import defaultSettings from '../config/defaultSettings';
 import { currentUser as queryCurrentUser } from './services/ant-design-pro/api';
-import type { RequestOptionsInit } from 'umi-request';
 import * as process from 'process';
+import type { RequestOptionsInit } from 'umi-request';
 
 const isDev = process.env.NODE_ENV === 'development';
 const loginPath = '/user/login';
 /**
  * 白名称单，不需要登录的页面
  */
-const weightList: string[] = ['/user/login', '/user/register'];
+const weightList: string[] = ['/user/register', loginPath];
 
 /** 获取用户信息比较慢的时候会展示一个 loading */
 export const initialStateConfig = {
@@ -32,17 +32,11 @@ export async function getInitialState(): Promise<{
   fetchUserInfo?: () => Promise<API.CurrentUser | undefined>;
 }> {
   const fetchUserInfo = async (): Promise<any> => {
-    const res = await queryCurrentUser();
     try {
-      return res;
+      return await queryCurrentUser();
     } catch (error) {
-      const { location } = history;
-      // 如果是白名单，不执行
-      if (weightList.includes(location.pathname)) return;
-      // 如果没有登录并且不是白名单，重定向到 login
       history.push(loginPath);
     }
-    return;
   };
   // 如果是白名单，不返回用户信息
   if (weightList.includes(location.pathname)) {
@@ -74,7 +68,7 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
       // 如果是白名单，不执行
       if (weightList.includes(location.pathname)) return;
       // 如果没有登录，重定向到 login
-      if (!initialState?.currentUser && location.pathname !== loginPath) {
+      if (!initialState?.currentUser) {
         history.push(loginPath);
       }
     },
@@ -94,7 +88,8 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
     // 自定义 403 页面
     // unAccessible: <div>unAccessible</div>,
     // 增加一个 loading 的状态
-    childrenRender: (children: any, props: { location: { pathname: string | string[] } }) => {
+    // @ts-ignore
+    childrenRender: (children, props) => {
       // if (initialState?.loading) return <PageLoading />;
       return (
         <>
@@ -123,15 +118,17 @@ const handelRequest = (
   url: string,
   options: RequestOptionsInit,
 ): { url?: string; options?: RequestOptionsInit } => {
-  const addHeaders = {
-    // 允许跨域携带cookie
-    withCredentials: true,
-  };
-  // @ts-ignore
-  options.headers = {
-    ...options.headers,
-    ...addHeaders,
-  };
+  const token = localStorage.getItem('token') as string;
+  if (token) {
+    const addHeaders = {
+      Authorization: JSON.parse(JSON.stringify(token)),
+    };
+    // @ts-ignore
+    options.headers = {
+      ...options.headers,
+      ...addHeaders,
+    };
+  }
   return { url, options };
 };
 const handelResponse = async (response: Response): Promise<any> => {

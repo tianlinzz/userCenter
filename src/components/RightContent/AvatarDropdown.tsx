@@ -31,6 +31,8 @@ const loginOut = async () => {
         }),
       });
     }
+    //移除token
+    localStorage.removeItem('token');
     message.success('退出成功！');
   } catch (error) {
     message.error(res.msg);
