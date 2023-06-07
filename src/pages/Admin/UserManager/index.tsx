@@ -113,10 +113,7 @@ const columns: ProColumns<API.CurrentUser>[] = [
       <TableDropdown
         key="actionGroup"
         onSelect={() => action?.reload()}
-        menus={[
-          { key: 'copy', name: '复制' },
-          { key: 'delete', name: '删除' },
-        ]}
+        menus={[{ key: 'copy', name: '复制' }]}
       />,
     ],
   },

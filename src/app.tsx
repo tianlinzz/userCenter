@@ -118,15 +118,12 @@ const handelRequest = (
   url: string,
   options: RequestOptionsInit,
 ): { url?: string; options?: RequestOptionsInit } => {
-  const token = localStorage.getItem('token') as string;
+  // 设置token
+  const token = localStorage.getItem('token');
   if (token) {
-    const addHeaders = {
-      Authorization: JSON.parse(token),
-    };
-    // @ts-ignore
     options.headers = {
       ...options.headers,
-      ...addHeaders,
+      Authorization: JSON.stringify(token),
     };
   }
   return { url, options };
