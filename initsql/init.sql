@@ -1,20 +1,22 @@
-create table tianlin.user
+-- auto-generated definition
+create table user
 (
     id           bigint auto_increment comment '用户id'
         primary key,
-    username     varchar(256)  default 'tianlin'                                                                                                                                                                                                                                                                                 not null comment '用户昵称',
-    userAccount  varchar(256)                                                                                                                                                                                                                                                                                                    null comment '用户账号',
-    avatarUrl    varchar(2048) default 'https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fc-ssl.duitang.com%2Fuploads%2Fitem%2F202003%2F03%2F20200303232427_rrzpq.thumb.1000_0.jpg&refer=http%3A%2F%2Fc-ssl.duitang.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1688518880&t=c17a5a80388e3ca57dab7d0827f0ee04' null comment '头像',
-    gender       tinyint                                                                                                                                                                                                                                                                                                         null comment '性别',
-    userPassword varchar(512)                                                                                                                                                                                                                                                                                                    not null comment '密码',
-    phone        varchar(128)                                                                                                                                                                                                                                                                                                    null comment '电话',
-    email        varchar(512)                                                                                                                                                                                                                                                                                                    null comment '邮箱',
-    userStatus   int           default 0                                                                                                                                                                                                                                                                                         null comment '用户状态 0正常',
-    createTime   datetime      default CURRENT_TIMESTAMP                                                                                                                                                                                                                                                                         null comment '数据插入时间',
-    updateTime   datetime      default CURRENT_TIMESTAMP                                                                                                                                                                                                                                                                         null on update CURRENT_TIMESTAMP comment '数据更新时间',
-    isDelete     tinyint       default 0                                                                                                                                                                                                                                                                                         not null comment '逻辑删除(0未删除 1删除)',
-    userRole     int           default 0                                                                                                                                                                                                                                                                                         not null comment '用户角色 0 普通用户 1管理员',
-    userCode     varchar(512)                                                                                                                                                                                                                                                                                                    not null comment '用户编码'
+    username     varchar(256) default 'tianlin'         not null comment '用户昵称',
+    userAccount  varchar(256)                           null comment '用户账号',
+    avatarUrl    varchar(2048)                          null comment '头像',
+    gender       tinyint                                null comment '性别',
+    userPassword varchar(512)                           not null comment '密码',
+    phone        varchar(128)                           null comment '电话',
+    email        varchar(512)                           null comment '邮箱',
+    userStatus   int          default 0                 null comment '用户状态 0正常',
+    createTime   datetime     default CURRENT_TIMESTAMP null comment '数据插入时间',
+    updateTime   datetime     default CURRENT_TIMESTAMP null on update CURRENT_TIMESTAMP comment '数据更新时间',
+    isDelete     tinyint      default 0                 not null comment '逻辑删除(0未删除 1删除)',
+    userRole     int          default 0                 not null comment '用户角色 0 普通用户 1管理员',
+    userCode     varchar(512)                           not null comment '用户编码',
+    tags         varchar(1024)                          null comment '用户标签列表'
 )
     comment '用户表';
 
