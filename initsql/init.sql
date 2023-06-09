@@ -1,4 +1,3 @@
--- auto-generated definition
 create table user
 (
     id           bigint auto_increment comment '用户id'
@@ -19,4 +18,25 @@ create table user
     tags         varchar(1024)                          null comment '用户标签列表'
 )
     comment '用户表';
+
+create table tag
+(
+    id         bigint auto_increment comment '用户id'
+        primary key,
+    tangName   varchar(256)                       null comment '标签名称',
+    userId     bigint                             null comment '用户id',
+    parentId   bigint                             null comment '父级标签id',
+    isParent   tinyint  default 0                 not null comment '是否为父标签 0否 1是',
+    createTime datetime default CURRENT_TIMESTAMP null comment '数据插入时间',
+    updateTime datetime default CURRENT_TIMESTAMP null on update CURRENT_TIMESTAMP comment '数据更新时间',
+    isDelete   tinyint  default 0                 not null comment '逻辑删除(0未删除 1删除)',
+    constraint tagName__index
+        unique (tangName) comment '标签名索引'
+)
+    comment '标签表';
+
+create index id__index
+    on tianlin.tag (id);
+
+
 
