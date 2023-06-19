@@ -6,10 +6,10 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
 @MapperScan("com.tianlin.usercenter.mapper")
-public class JavaServerApplication {
+public class WebApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(JavaServerApplication.class, args);
+        SpringApplication.run(WebApplication.class, args);
     }
 
 }
