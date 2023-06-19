@@ -10,11 +10,8 @@ spring:
   session:
     timeout: 604800  # session过期时间, 两天
 server:
-  port: 8080
-  reactive:
-    session:
-      cookie:
-        secure: false
+  port: 8081
+  address: 127.0.0.1
 #  servlet:
 #   context-path: /api
 mybatis-plus:
