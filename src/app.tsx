@@ -126,6 +126,8 @@ const handelRequest = (
       Authorization: JSON.stringify(token),
     };
   }
+  // @ts-ignore
+  options.headers['withCredentials '] = true;
   return { url, options };
 };
 const handelResponse = async (response: Response): Promise<any> => {
@@ -143,7 +145,7 @@ const handelResponse = async (response: Response): Promise<any> => {
   return Promise.reject(new Error(res?.description || res?.msg || '网络错误'));
 };
 const prefix =
-  process.env.NODE_ENV === 'production' ? 'http://114.132.229.206:8080' : 'http://127.0.0.1:8080'; // 开发环境下，代理到本地后端服务
+  process.env.NODE_ENV === 'production' ? 'http://114.132.229.206:8080' : 'http://127.0.0.1:8081'; // 开发环境下，代理到本地后端服务
 export const request: RequestConfig = {
   prefix,
   timeout: 1000 * 10,
