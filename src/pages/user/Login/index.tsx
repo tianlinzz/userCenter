@@ -1,7 +1,7 @@
 import Footer from '@/components/Footer';
 import { login } from '@/services/ant-design-pro/api';
 import { LockOutlined, UserOutlined } from '@ant-design/icons';
-import { LoginForm, ProFormCheckbox, ProFormText } from '@ant-design/pro-components';
+import { LoginForm, ProFormText } from '@ant-design/pro-components';
 import { SYSTEM_LOGO } from '@/pages/constant';
 import { message } from 'antd';
 import React from 'react';
@@ -92,16 +92,6 @@ const Login: React.FC = () => {
               },
             ]}
           />
-
-          <div
-            style={{
-              marginBottom: 24,
-            }}
-          >
-            <ProFormCheckbox noStyle name="autoLogin">
-              自动登录
-            </ProFormCheckbox>
-          </div>
         </LoginForm>
       </div>
       <Footer />

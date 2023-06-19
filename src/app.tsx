@@ -126,8 +126,8 @@ const handelRequest = (
       Authorization: JSON.stringify(token),
     };
   }
-  // @ts-ignore
-  options.headers['withCredentials '] = true;
+  options.credentials = 'include'; // 允许跨域携带cookie
+
   return { url, options };
 };
 const handelResponse = async (response: Response): Promise<any> => {
