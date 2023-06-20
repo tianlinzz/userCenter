@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
  *
  * @author 张添琳
  */
-@RestControllerAdvice // 全局异常处理 Spring AOP, 拦截所有controller
+@RestControllerAdvice // 全局异常处理 Spring AOP, 拦截所有controller， 配置这个注解后项目启动时会自动加载这个类
 @Slf4j
 public class GlobalExceptionHandler {
 
