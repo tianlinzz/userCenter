@@ -159,9 +159,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         }
         // 3.返回用户信息,不包含密码
         User safetyUser = getSafetUser(user);
-        // 4.记录用户的登录状态
+        // 4.记录用户的登录状态， 把session存储到redis中
         request.getSession().setAttribute(USER_LOGIN_STATUS, safetyUser);
-        User user1 = (User) request.getSession().getAttribute(USER_LOGIN_STATUS);
+
         // 5.返回用户信息
         return getSafetUser(user);
     }
