@@ -126,6 +126,7 @@ const handelRequest = (
       Authorization: JSON.stringify(token),
     };
   }
+
   options.credentials = 'include'; // 允许跨域携带cookie
 
   return { url, options };
